@@ -1,1 +1,1 @@
-# ASCII_ART
+# Image to ASCII converter
