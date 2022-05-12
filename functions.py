@@ -1,10 +1,12 @@
 import streamlit as st
-import sys
-import cv2
-import numpy as np
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw 
+
+def main_info(data):
+    st.subheader("Imported image")
+    st.image(data)
+    st.subheader("Image adjustment")
 
 def resolution (image):
     width, height = image.size
@@ -12,8 +14,9 @@ def resolution (image):
 
 def param_input ():
     res_increase = st.number_input("Increase final image resolution by:",0.0,10.0,step=0.5, value=2.0)
-    font_size = st.slider("ASCII font size", 0, 20, step=1, value=10)
-    new_width = st.number_input("Width adjustment", 0, 1000, value=220)
+    col1, col2 = st.columns(2)
+    font_size = col1.slider("ASCII font size", 0, 20, step=1, value=10)
+    new_width = col2.number_input("Width adjustment", 0, 1000, value=220)
     return res_increase,font_size, new_width
 
 def chars_selection ():
@@ -26,7 +29,6 @@ def chars_selection ():
         return chars
 
 def imagetransformer (img, new_width, chars):
-    #img = Image.open(url)
     width, height = img.size
     aspect_ratio = height/width
     new_height = aspect_ratio * new_width *0.55
@@ -38,7 +40,6 @@ def imagetransformer (img, new_width, chars):
     new_pixels_count = len(new_pixels)
     ascii_image = [new_pixels[index:index + new_width] for index in range(0, new_pixels_count, new_width)]
     ascii_image = "\n".join(ascii_image)
-    #print (width, height)
     return ascii_image
 
 def image_maker (x_res, y_res, font_size, txt, color):
@@ -47,3 +48,11 @@ def image_maker (x_res, y_res, font_size, txt, color):
     draw = ImageDraw.Draw(img)
     draw.text((0, 0), txt,(color,color,color), font=font)
     return img
+
+def final_image(final_image):
+    st.subheader("Final image")
+    st.image(final_image)
+    name = st.text_input("Final image name", value="My ASCII image")
+    save = st.button("Save")
+    if save:
+        final_image = final_image.save("./saved_images/" + name + ".png")
